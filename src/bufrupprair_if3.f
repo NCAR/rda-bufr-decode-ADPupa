@@ -1,5 +1,5 @@
 C ##############################################################################                    
-C #     PROGRAM BUFRUPA                                                        #
+C #     PROGRAM BUFRUPPRAIR_IF3                                                #
 C #                                                                            #
 C #      A BUFR INPUT DATA FILE CONTAINS A SERIES OF "MESSAGES" (WHICH ARE     #
 C #        VARIABLE LENGTH RECORDS), EACH CONTAINING AT LEAST ONE BUFR         #
@@ -9,9 +9,8 @@ C #        FILE.                                                               #
 C #      2018-04-24 GSP change to bypass filename string parsing               #
 C #        which was broken by /glade2 switchover. Brittle, risky code.        #
 C #        This is an interim measure before partitioning changes.             #
-C #      2018-04-24 GSP change to allow partitioning.                          #
-C #        Processes 1 file at a time. Requires 4 command line inputs:         #
-C #           rindex infilepath filename config_file
+C #      2018-05-07 GSP change for partitioning based on 2018-04-24 version    #
+C #        of bufrupprairfd.f                                                  #
 C ##############################################################################
 C
         CHARACTER*1 DODIAG        ! SET BY DSS STAFF (NOT BY USERS) TO OBTAIN
@@ -26,7 +25,7 @@ C
 C       USERS CAN CHANGE THE DEFAULT INPUT DIRECTORY THROUGH THE CONFIGURATION
 C         FILE BY GIVING THEIR COMPLETE PATHNAME TO WHATEVER.
 C
-        PARAMETER  ( INKSTN=1)       ! MAXIMUM NUMBER OF INPUT FILES
+        PARAMETER  ( INKSTN=1    )   ! MAXIMUM NUMBER OF INPUT FILES
         PARAMETER  ( LENINMX=192 )   ! MAXIMUM LENGTH OF INPUT BASE FILE NAMES
 C        CHARACTER*64 INFILES(INKSTN)! 64 WOULD PICK UP ".le" EXTENSION AND MORE
         CHARACTER*192 INFILES(INKSTN)! 64 WOULD PICK UP ".le" EXTENSION AND MORE         
@@ -79,9 +78,9 @@ C       CONFIGURATION FILE
 
         CHARACTER*80 argv1, argv2, argv3, argv4, CONFILE
         CHARACTER*6   RINDEX
-        CHARACTER*36  infilepath
-        CHARACTER*30  filename
- 
+        CHARACTER*47 infilepath
+        CHARACTER*30 filename
+
         INTEGER NARG              ! NUMBER OF COMMAND-LINE ARGUMENTS
         PARAMETER  ( ICUNIT=8 )   ! CONFIGURATION INPUT FILE
 
@@ -432,7 +431,7 @@ C
 
         OPEN (ICUNIT, FILE=CONFILE)
 C
-         WRITE (*,*) 'opening configuration file'
+C        WRITE (*,*) 'opening configuration file'
 C
         IFILTER = 'n'
 C
@@ -925,18 +924,19 @@ C #                                                                            #
 C ##############################################################################
 C
         KNK = KNK + 1
-        IF (KNK.GT.INK)  EXIT DOFILS
-C
+        IF (KNK.GT.INKSTN)  EXIT DOFILS
+
+        INFILE = infilepath//filename
+        WRITE (*,*)  'DODIAG, INFILE: ', DODIAG, " ", INFILE
+ 
+C        IF (KNK.GT.INK)  EXIT DOFILS
 C        INFILE = DIRIN(1:INHALE)//INFILES(KNK)
-         INFILE = INFILES(KNK)
+C        INFILE = INFILES(KNK)
 C
 C ##############################################################################
 C #     OPEN THE BUFR DATA FILE, WHICH IS PACKED BINARY                        #
 C ##############################################################################
 C
-        INFILE = infilepath//filename
-        WRITE (*,*)  'DODIAG, INFILE: ', DODIAG, " ", INFILE
-
         OPEN (IIUNIT, FILE=INFILE, FORM='UNFORMATTED' )
         IF (DODIAG.EQ.'y')  THEN
 C         WRITE (IDUNIT,9090)  KNK, INK, INFILE(1:INHALE+LENINMX)
@@ -994,9 +994,10 @@ C
         ENDIF
 
 C       override file string parsing
-        PRTFILE = './'//INFILES(KNK)(48:LENEND)//'_'//RINDEX//'.txt'
-        WRITE (*,*)  'PRTFILE ', PRTFILE
+C       PRTFILE = './'//INFILES(KNK)(48:LENEND)//'_'//RINDEX//'.txt'
 
+        PRTFILE = './'//filename//'_'//RINDEX//'.txt'
+        WRITE (*,*)  'PRTFILE ', PRTFILE
 C
 C ##############################################################################
 C #     OPEN BUFR PRINTOUT ("DUMP") FILE                                       #
