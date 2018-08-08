@@ -425,14 +425,14 @@ C
             CONFILE = argv4
             
           DO 15, IP = LEN(infilepath), 1, -1 
-            IF(STRING(IP:IP) .NE. ' ') GO TO 20 
+            IF(infilepath(IP:IP) .NE. ' ') GO TO 20 
  15       CONTINUE 
  20       len_inpath = IP
 
           WRITE (*,*) 'rindex infilepath filename config_file'
           WRITE (*,*) RINDEX, infilepath(1:len_inpath), filename, CONFILE
-          WRITE (*,*) RINDEX//"_"//infilepath(1:len_inpath)//"_"//filename//"_"
-     +                 //CONFILE
+          WRITE (*,*) RINDEX//"_"//infilepath(1:len_inpath)//"_"
+     +                //filename//"_"//CONFILE
         ENDIF
 
         OPEN (ICUNIT, FILE=CONFILE)
