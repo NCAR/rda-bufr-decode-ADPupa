@@ -78,8 +78,9 @@ C       CONFIGURATION FILE
 
         CHARACTER*80 argv1, argv2, argv3, argv4, CONFILE
         CHARACTER*6   RINDEX
-        CHARACTER*47 infilepath
+        CHARACTER*80 infilepath
         CHARACTER*30 filename
+        INTEGER IP, len_inpath
 
         INTEGER NARG              ! NUMBER OF COMMAND-LINE ARGUMENTS
         PARAMETER  ( ICUNIT=8 )   ! CONFIGURATION INPUT FILE
@@ -422,10 +423,15 @@ C
             filename = argv3
           CALL GETARG(4,argv4)
             CONFILE = argv4
+            
+          DO 15, IP = LEN(infilepath), 1, -1 
+            IF(STRING(IP:IP) .NE. ' ') GO TO 20 
+ 15       CONTINUE 
+ 20       len_inpath = IP
 
           WRITE (*,*) 'rindex infilepath filename config_file'
-          WRITE (*,*) RINDEX, infilepath, filename, CONFILE
-          WRITE (*,*) RINDEX//"_"//infilepath//"_"//filename//"_"
+          WRITE (*,*) RINDEX, infilepath(1:len_inpath), filename, CONFILE
+          WRITE (*,*) RINDEX//"_"//infilepath(1:len_inpath)//"_"//filename//"_"
      +                 //CONFILE
         ENDIF
 
@@ -926,7 +932,7 @@ C
         KNK = KNK + 1
         IF (KNK.GT.INKSTN)  EXIT DOFILS
 
-        INFILE = infilepath//filename
+        INFILE = infilepath(1:len_inpath)//filename
         WRITE (*,*)  'DODIAG, INFILE: ', DODIAG, " ", INFILE
  
 C        IF (KNK.GT.INK)  EXIT DOFILS
