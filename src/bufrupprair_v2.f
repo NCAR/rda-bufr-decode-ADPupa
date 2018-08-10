@@ -25,10 +25,10 @@ C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         PARAMETER  ( ICUNIT=8 )   ! CONFIGURATION INPUT FILE
         PARAMETER  ( IDUNIT=7 )   ! DIAGNOSTIC OUTPUT FILE
 
-        PARAMETER  ( LENINMX=300 )   ! MAXIMUM LENGTH OF INPUT BASE FILE NAMES
-        CHARACTER*300 INFILE
+        PARAMETER  ( LENINMX=128 )   ! MAXIMUM LENGTH OF INPUT BASE FILE NAMES
+        CHARACTER*128 INFILE
 
-        CHARACTER*300 input_file, output_file, config_file, argv
+        CHARACTER*128 input_file, output_file, config_file, argv
         CHARACTER*32 diag_file
         DATA diag_file /'bufrupprair_diagnostics         '/
 
@@ -346,7 +346,7 @@ C
         OPEN (ICUNIT, FILE=config_file)
         IFILTER = 'n'
 
-        DO IC = 1, 14000        ! BEGIN  CONFIGURATION FILE READS
+        DO IC = 1, 100        ! BEGIN  CONFIGURATION FILE READS
 
           IF (DODIAG.EQ.'y')  THEN
             WRITE (*,*) 'read line ',ic,' from the configuration file'
@@ -751,7 +751,7 @@ C-----7---------------------------------------------------------------72
         OPEN (IIUNIT, FILE=INFILE, FORM='UNFORMATTED' )
         IF (DODIAG.EQ.'y')  THEN
           WRITE (IDUNIT,9090) INFILE
-9090      FORMAT (/,1X,'BUFR DATA INPUT FILE ',A300,' OPENED')
+9090      FORMAT (/,1X,'BUFR DATA INPUT FILE ',A128,' OPENED')
         ENDIF
         WRITE (*,*)
         WRITE (*,*)  'BUFR DATA INPUT FILE ',INFILE,' OPENED '
@@ -1303,7 +1303,7 @@ C-----7---------------------------------------------------------------72
           WRITE (IDUNIT,9890)  INFILE, RECORDS, RECSREJ, RECSACC,
      +       REPORTS, REPSACC, REPSREJ
 9890      FORMAT (/,1X,'BUFR EXTRACTION STATISTICS',
-     +              1X,'FOR FILE INFILE  ',A300,/,
+     +              1X,'FOR FILE INFILE  ',A128,/,
      +              5X,'RECORDS    FOUND ',I12,/,
      +              5X,'RECORDS REJECTED ',I12,/,
      +              5X,'RECORDS ACCEPTED ',I12,//,
