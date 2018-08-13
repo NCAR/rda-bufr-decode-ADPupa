@@ -669,8 +669,6 @@ C
         WRITE (*,*)
         WRITE (*,*)  'CONFIGURATION FILE HAS BEEN ACCEPTED:'
 
-7777    format (10(/,1x,a64))
-
 C
 C-----7---------------------------------------------------------------72
 C       PRINT CONFIGURATION SETTINGS TO STDOUT
@@ -768,7 +766,7 @@ C
         OPEN(IPUNIT,FILE=output_file,STATUS='UNKNOWN',FORM='FORMATTED')
         IF (DODIAG.EQ.'y')  THEN
           WRITE (IDUNIT,9100) output_file
-9100      FORMAT (/,1X,'BUFR OUTPUT FILE OPENED ',A200)
+9100      FORMAT (/,1X,'BUFR OUTPUT FILE OPENED ',A128)
         ENDIF
         WRITE (*,*)
         WRITE (*,*)  'BUFR OUTPUT FILE OPENED ',output_file
