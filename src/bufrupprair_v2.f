@@ -1630,16 +1630,18 @@ C
         CHARACTER*1 DODIAG, ACK
         SAVE
         ACK = 'n'
+        IF (DODIAG.EQ.'y') THEN
             WRITE (IDUNIT,7769) RECORDS, RR, A8RPID(1:5)
 7769        FORMAT (1X,'CKWMO:  RECORD ',I9,', REPORT ',I9,
      +       ', STATION ',A5)
+        ENDIF
         DO N = 1, NWMO
           IF (A8RPID(1:5).EQ.WMOLIST(N)(1:5))  THEN
             ACK = 'y'
             EXIT
           ENDIF
         ENDDO
-C        IF (DODIAG.EQ.'y')  THEN
+        IF (DODIAG.EQ.'y')  THEN
           IF (ACK.EQ.'n')  THEN
             WRITE (IDUNIT,7770) RECORDS, RR, A8RPID(1:5)
 7770        FORMAT (1X,'CKWMO:  RECORD ',I9,', REPORT ',I9,
@@ -1648,7 +1650,7 @@ C        IF (DODIAG.EQ.'y')  THEN
             WRITE (IDUNIT,7771) RECORDS, RR, A8RPID(1:5)
 7771        FORMAT (1X,'CKWMO:  RECORD ',I9,', REPORT ',I9,
      +       ', ACCEPTED, STATION ',A5)
-C          ENDIF
+          ENDIF
         ENDIF
         RETURN
         END
@@ -1672,7 +1674,7 @@ C
             EXIT
           ENDIF
         ENDDO
-c        IF (DODIAG.EQ.'y')  THEN
+        IF (DODIAG.EQ.'y')  THEN
           IF (ACK.EQ.'n')  THEN
             WRITE (IDUNIT,7775) RECORDS, RR, A8RPID(1:8)
 7775        FORMAT (1X,'CKWBB:  RECORD ',I9,', REPORT ',I9,
@@ -1682,7 +1684,7 @@ c        IF (DODIAG.EQ.'y')  THEN
 7776        FORMAT (1X,'CKWBB:  RECORD ',I9,', REPORT ',I9,
      +       ', ACCEPTED, STATION ',A8)
           ENDIF
-c        ENDIF
+        ENDIF
         RETURN
         END
 C
