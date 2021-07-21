@@ -1,16 +1,22 @@
 #!/bin/sh
 #  ------------------------------------------------------------------------
-#  This script will make bufrupprair.x which to extract data from ADP BUFR
+#  Install script for the NCAR DAV system 'casper'.
+#
+#  This script will make bufrupperair.x which to extract data from ADP BUFR
 #  input files, and place the data into a basic text file.  It is used to
-#  extract data from these kinds of files:
+#  extract data from ADPUPA, AIRCFT, SATWND, and AIRCAR BUFR files:
 #      gdas.adpupa.tHHz.YYYYMMDD.bufr 
 #      gdas.aircft.tHHz.YYYYMMDD.bufr
 #      gdas.satwnd.tHHz.YYYYMMDD.bufr 
 #      gdas.aircar.tHHz.YYYYMMDD.bufr
 #
 #  dumpbufr.x:        used to dump all contents of a BUFR file.
-#  ** Make sure the "ar" command location has been set in your path
-#  environment variable.  Type "which ar" to check if this is done. **
+#
+#  Note: NCEP BUFRLIB library is required to compile this source code,
+#        and the location of your local installation of BUFRLIB should
+#        be defined in the 'LIB' variable below.  The NCEP BUFRLIB 
+#        software is available at
+#        https://emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib.php
 #  ------------------------------------------------------------------------
  
 set -eua
@@ -21,24 +27,17 @@ set -eua
  
 CPLAT=linux
 SRC=../src
-LIB=/glade/apps/opt/BUFRLIB/11.0.0/intel/12.1.5/lib  # path to BUFRLIB
+LIB=/glade/u/apps/dav/opt/bufrlib/11.0.0/intel/17.0.1/lib  # path to BUFRLIB
 EXE=../exe
 INSTALL=.
 
-#  different platforms use different link name protocols
-#  -----------------------------------------------------
-
-# if using linux, BUFR files must be run through the "grabbufr/grabbufr.sh" script
-# with the resulting output used as input for the decoders.  Set appropriate compiler
-# in grabbufr.sh, and exe/convert.csh
- 
 cflag=""
 fflag=""
 
 if [ $CPLAT = linux ]
 then
-   CC=/glade/apps/opt/cmpwrappers/icc    # activated 2014.02.27
-   FC=/glade/apps/opt/cmpwrappers/ifort  # activated 2014.02.27
+   CC=icc
+   FC=ifort
    fflag=""
    cflag="-DUNDERSCORE"
 
@@ -48,30 +47,19 @@ then
 #   cflag=" -O3 -DUNDERSCORE -w"
 fi
 
-#  Compile and archive the Bufr Library
-#  ------------------------------------
-#echo "Compiling BUFRLIB Library..."
-#cd $LIB
-#if [ -e bufrlib.a ]
-#then
-#  rm bufrlib.a
-#fi
-#$LIB/makebufrlib.sh
-#cd $INSTALL
-
-#  Compile the decode programs
+#  Compile the source code
 #  ---------------------------------------
  
 echo "Compiling bufr_configdecode_ADPupa programs..."
 $FC $fflag -c $SRC/dumpbufr.f
-$FC $fflag -c $SRC/bufrupprairfd.f
+$FC $fflag -c $SRC/bufrupperair.f
  
 #  link and load the executables
 #  -----------------------------
 
 echo "Linking..."
 $FC $fflag -o $EXE/dumpbufr.x dumpbufr.o $LIB/libbufr.a
-$FC $fflag -o $EXE/bufrupprairfd.x bufrupprairfd.o $LIB/libbufr.a
+$FC $fflag -o $EXE/bufrupperair.x bufrupperair.o $LIB/libbufr.a
 
 #  clean up
 #  --------
