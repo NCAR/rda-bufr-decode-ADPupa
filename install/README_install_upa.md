@@ -1,4 +1,4 @@
-# COMPILING AND INSTALLING THE BUFR DECODING SOFTWARE
+# Compiling and installing the BUFR decoding software
 
 The relevant bufrdecode sub-directories are:
 
