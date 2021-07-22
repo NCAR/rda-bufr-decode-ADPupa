@@ -7,7 +7,8 @@ The parameters to be extracted are identified by mnemonics.  If the set of
 default parameters defined in `bufrupperair.f` is sufficient, you will not
 need to know other mnemonics.  To add more parameters, please refer
 to a list of mnemonics, some of which are shown in `..bufrdecode/docs/mnemonics.txt`.  
-A complete list is available in the NCEP BUFR document:
+
+A complete list of mnemonics is available in the NCEP BUFR document:
 https://www.emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib/tables/bufrtab_tableb.html.
 
 Following is a list and description of the sample configurations.
@@ -26,14 +27,14 @@ bufrupprair_config_gmeq         Retrieves stations inside a latitude-longitude b
                                 including the location where the Greenwich Meridian meets 
                                 the equator.
 
-bufrupprair_config_high         Retrieves stations within the specified elevation range
+bufrupprair_config_elev         Retrieves stations within the specified elevation range,
+                                specified in meters
 
-bufrupprair_config_idl          Retrieves stations inside a latitude-
-                                  longitude boundary for the Bering Strait region,
-                                  on either side of the International Date Line.
-                                  Note that this includes where the longitude
-                                  changes from maximum west (-179.9) to maximum
-                                  east (179.9)
+bufrupprair_config_idl          Retrieves stations inside a latitude-longitude boundary 
+                                for the Bering Strait region, on either side of the 
+                                International Date Line.  Note that this includes where 
+                                the longitude changes from maximum west (-179.9) to maximum
+                                east (179.9)
 
 bufrupprair_config_US_def       Retrieves observations within a latitude-longitude boundary
                                 that includes the 48 contiguous United States
