@@ -13,42 +13,42 @@ https://www.emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib/tables/bufrtab_ta
 
 Following is a list and description of the sample configurations.
 ```
-CONFIGURATION FILE              DESCRIPTION
+CONFIGURATION FILE               DESCRIPTION
 -------------------------------------------------------------------------------------------
-bufrupprair_config_Guide_user   A complete template with a description of the options and
-                                how to enter them
+bufrupperair_config_Guide_user   A complete template with a description of the options and
+                                 how to enter them
 
-bufrupprair_config_all          Retrieves everything from the input BUFR file
+bufrupperair_config_all          Retrieves everything from the input BUFR file
 
-bufrupprair_config_circles      Retrieves stations within a couple of circles of a 
-                                given radius
+bufrupperair_config_circles      Retrieves stations within a couple of circles of a 
+                                 given radius
 
-bufrupprair_config_gmeq         Retrieves stations inside a latitude-longitude boundary 
-                                including the location where the Greenwich Meridian meets 
-                                the equator.
+bufrupperair_config_gmeq         Retrieves stations inside a latitude-longitude boundary 
+                                 including the location where the Greenwich Meridian meets 
+                                 the equator.
 
-bufrupprair_config_elev         Retrieves stations within the specified elevation range,
-                                specified in meters
+bufrupperair_config_elev         Retrieves stations within the specified elevation range,
+                                 specified in meters
 
-bufrupprair_config_idl          Retrieves stations inside a latitude-longitude boundary 
-                                for the Bering Strait region, on either side of the 
-                                International Date Line.  Note that this includes where 
-                                the longitude changes from maximum west (-179.9) to maximum
-                                east (179.9)
+bufrupperair_config_idl          Retrieves stations inside a latitude-longitude boundary 
+                                 for the Bering Strait region, on either side of the 
+                                 International Date Line.  Note that this includes where 
+                                 the longitude changes from maximum west (-179.9) to maximum
+                                 east (179.9)
 
-bufrupprair_config_US_def       Retrieves observations within a latitude-longitude boundary
-                                that includes the 48 contiguous United States
+bufrupperair_config_US_def       Retrieves observations within a latitude-longitude boundary
+                                 that includes the 48 contiguous United States
 
-bufrupprair_config_US_extra     Retrieves observations within a latitude-longitude boundary 
-                                that includes the 48 contiguous United States, and extracts
-                                some additional parameters
+bufrupperair_config_US_extra     Retrieves observations within a latitude-longitude boundary 
+                                 that includes the 48 contiguous United States, and extracts
+                                 some additional parameters
 
-bufrupprair_config_US_selpr     Retrieves observations within a latitude-longitude boundary 
-                                that includes the 48 contiguous United States, and extracts 
-                                some additional parameters at pressure levels between 800 
-                                and 100mb.
+bufrupperair_config_US_selpr     Retrieves observations within a latitude-longitude boundary 
+                                 that includes the 48 contiguous United States, and extracts 
+                                 some additional parameters at pressure levels between 800 
+                                 and 100mb.
                     
-bufrupprair_config_wbb          Retrieves observations from SYNOP stations from the given WMO blocks
+bufrupperair_config_wbb          Retrieves observations from SYNOP stations from the given WMO blocks
 
-bufrupprair_config_wmo          Retrieves observations from the specified SYNOP stations
+bufrupperair_config_wmo          Retrieves observations from the specified SYNOP stations
 ```
