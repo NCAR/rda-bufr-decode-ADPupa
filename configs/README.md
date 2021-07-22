@@ -15,7 +15,7 @@ Following is a list and description of the sample configurations.
 ```
 CONFIGURATION FILE               DESCRIPTION
 -------------------------------------------------------------------------------------------
-bufrupperair_config_Guide_user   A complete template with a description of the options and
+bufrupperair_config_template     A complete template with a description of the options and
                                  how to enter them
 
 bufrupperair_config_all          Retrieves everything from the input BUFR file
