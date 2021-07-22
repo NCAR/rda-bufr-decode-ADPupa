@@ -1,4 +1,4 @@
-# CONFIGURATION FILE GUIDE
+# Configuration file guide and template
 ```
 IDX VALUES                                  DESCRIPTION
 ---------------------------------------------------------------------------------------------------------------------------
