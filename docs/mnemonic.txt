@@ -27,4 +27,4 @@ WSPD        Wind Speed (m/s)
 
 FOR MORE, SEE:
 
-http://www.emc.ncep.noaa.gov/mmb/data_processing/bufrtab_tableb.htm             
+https://www.emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib/tables/bufrtab_tableb.html           
