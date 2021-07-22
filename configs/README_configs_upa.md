@@ -1,24 +1,17 @@
-The "configs" directory contains a few sample configuration files which can
-be provided to the bufrupprair.f executable.  When you want to try one of
-these, you must first copy it to a file named bufrupprair_config.
+# Configuration file user guide and templates
 
-To make your own, copy the bufrupprair_config_Guide_user file to a file
-named bufrupprair_config.
-
-When done editing a bufrupprair_config file, you must then copy it to the
-...bufrdecode/bufrobs directory, i.e., where the data files are located, and where
-bufrupprair.x is run.
+The "configs" directory contains sample configuration files which can
+be provided to the bufrupperair.f executable.
 
 The parameters to be extracted are identified by mnemonics.  If the set of
-default parameters, defined in bufrupprair.x, is sufficient, you will not
-need to know other mnemonics.  To add more parameters, you will need to refer
-to a list, some of which are shown in the ..bufrdecode/docs/mnemonics.txt
-file.  A complete list is available in the NCEP BUFR document:
-http://www.emc.ncep.noaa.gov/mmb/data_processing/bufrtab_tableb.htm
-It is possible to turn off the default, and obtain only what you want.
+default parameters defined in bufrupperair.f is sufficient, you will not
+need to know other mnemonics.  To add more parameters, please refer
+to a list of mnemonics, some of which are shown in `..bufrdecode/docs/mnemonics.txt`.  
+A complete list is available in the NCEP BUFR document:
+https://www.emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib/tables/bufrtab_tableb.html.
 
-Here is a list of the sample configurations, and a description.
-
+Following is a list and description of the sample configurations.
+```
 CONFIGURATION
 FILE                            DESCRIPTION
 bufrupprair_config_Guide_user   A template with a description of the options and
@@ -58,7 +51,7 @@ bufrupprair_config_wbb          Gets only the SYNOP stations from the given
                                   WMO blocks
 
 bufrupprair_config_wmo          Gets only the specified SYNOP stations
-
+```
 
 NOTE: All these configuration files use data file gdas.adpupa.t00z.20100901.bufr
       as an input.  Others may use one or more of the additional gdas files.  All
