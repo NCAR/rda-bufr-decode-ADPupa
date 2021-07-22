@@ -1,22 +1,10 @@
-CONFIGURATION FILE GUIDE
-IDX VALUES                                  MEANING
-011 gdas.aaaaaa.tHHz.YYYYMMDD.bufr          BUFR data input file name - must be in this form
-011 gdas.aaaaaa.tHHz.YYYYMMDD.bufr            subsequent lines form a list. 'aaaaaa' is either 'adpupa',
-011 gdas.aaaaaa.tHHz.YYYYMMDD.bufr            'aircft', 'satwnd' or 'aircar'.  
-                                              HH is the synoptic time (00, 06, 12 or 18)
-                                              The suffix '.le' may be used to indicate little-endian
-015 /aaaaa/bbbbb/ccccc                      absolute directory pathname for  input files, to override 
-                                              default ../bufrobs (which is relative)
-016 /wwwww/xxxxx/yyyyy                      absolute directory pathname for output files, to override 
-                                              default ../textobs (which is relative)
-021 AAAAAA AAAAAA AAAAAA AAAAAA ..          BUFR ADP record types (e.g. ADPUPA, AIRCFT, SATWND, AIRCAR); 
-                                              10(a6,1x) per line, subsequent lines for up to 20 types
-026 TTTTTTTT TTTTTTTT TTTTTTTT TTTTTTTT ..  BUFR observation types (e.g. RAOBF, PIREP); 8(a8,1x) per line
-                                              subsequent lines for up to 50 types
-031 YYYYMMDDHH  YYYYMMDDHH                  beginning date, ending date; 2(i10,2x)
-041 y/n                                     y (default) gets the report ID, a basic set of parameters and
+# CONFIGURATION FILE GUIDE
+```
+IDX VALUES                                  DESCRIPTION
+---------------------------------------------------------------------------------------------------------------------------
+041 y/n                                     y (default) = gets the report ID, a basic set of parameters and
                                               any extra parameters selected below.
-                                            n gets the report ID, and only those parameters selected below.
+                                            n = gets the report ID, and only those parameters selected below.
 041 AAAA BBBB CCCC DDDD ..                  extra parameter mnemonics;  lengths from four to eight characters, 
 041 .. WWWW XXXX YYYY ZZZZ                    separated by blanks, up to 75 characters per line, for a list of 
                                               up to 100 mnemonics.  basic mnemonics are: PRLC PSAL GP10 GP07
@@ -36,9 +24,6 @@ IDX VALUES                                  MEANING
 086   pppp  pppp                            pressure level range (1100 to 1 mb) (2i6)
 091 c or k                                  temperature units: c/k  for  Kelvin/Celsius (default is 'c')
 999 STOP                                    END OF CONFIGURATION (MUST BE PRESENT)
-
+```
 ADDITIONAL COMMENTS
-IDX
-011 MANDATORY TO HAVE AT LEAST ONE INPUT FILE NAME *****************************************************
-021 to 099: simply omit the line(s) if you do not want to filter by this means
-031 report times can include dates which fall outside the date suggested by the file name
+041 to 099: simply omit the line(s) if you do not want to filter by this means
