@@ -1,5 +1,4 @@
-Satwnd Header Definitions:
-
+SATWND Header Definitions:
 
 DATACAT = BUFR Data Category
 SAID = Satellite Identifier

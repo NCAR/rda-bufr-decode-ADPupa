@@ -1,7 +1,6 @@
 **Reports lacking pressure levels are ommited**
 
-Raob_Pibal Header Definitions:
-
+RAOB_PIBAL Header Definitions:
 
 DATACAT = BUFR Data Category
 RATP = Radiosonde Type
