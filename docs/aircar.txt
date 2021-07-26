@@ -1,5 +1,4 @@
-Aircar Header Definitions:
-
+AIRCAR Header Definitions:
 
 DATACAT = BUFR Data Category
 ACID = Aircraft Flight Number
