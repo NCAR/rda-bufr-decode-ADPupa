@@ -3,7 +3,7 @@
 A complete listing of NCEP BUFR mnemonics can be found at:
 https://www.emc.ncep.noaa.gov/emc/pages/infrastructure/bufrlib/tables/bufrtab_tableb.html
 
-Following is a list of more commonly used mnemonics
+Following is a list of more commonly used mnemonics:
 ```
 MNEMONIC    DESCRIPTION
 ---------------------------------------------------
