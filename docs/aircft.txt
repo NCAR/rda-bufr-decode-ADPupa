@@ -1,5 +1,4 @@
-Aircraft Header Definitions:
-
+AIRCFT Header Definitions:
 
 DATACAT = BUFR Data Category
 RPID = Report Identifier
