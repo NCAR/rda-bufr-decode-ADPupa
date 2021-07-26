@@ -9,11 +9,11 @@ ADPUPA, AIRCFT, AIRCAR, and SATWND observations, for the time period 1999 - pres
 ## Usage
 After compiling the source code, the executable can be run with the command
 ```
-$ bufrupperair.x <BUFR input file> <output file> <configuration file>
+./bufrupperair.x <BUFR input file> <output file> <configuration file>
 ```
 For example:
 ```
-$ bufrupperair.x ../bufrobs/gdas.adpupa.t00z.20210701.bufr ../textobs/gdas.adpupa.t00z.20210701.txt ../configs/bufrupperair.config
+./bufrupperair.x ../bufrobs/gdas.adpupa.t00z.20210701.bufr ../textobs/gdas.adpupa.t00z.20210701.txt ../configs/bufrupperair.config
 ```
 ## Directory structure
 The directories provided in this project are as follows:
@@ -87,7 +87,7 @@ the configuration files, and finally running the decoder software.
     run the `exe/bufrupperair.x` executable with the input BUFR file, output file, and 
     configuration file provided as command line arguments. For example:
     ```
-    $ bufrupperair.x ../bufrobs/gdas.adpupa.t00z.20210701.bufr ../textobs/gdas.adpupa.t00z.20210701.txt ../configs/bufrupperair.config
+    ./bufrupperair.x ../bufrobs/gdas.adpupa.t00z.20210701.bufr ../textobs/gdas.adpupa.t00z.20210701.txt ../configs/bufrupperair.config
     ```
 
     To generically dump output from an individual file, run the `exe/dumpbufr.x` 
