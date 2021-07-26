@@ -79,13 +79,16 @@ the configuration files, and finally running the decoder software.
 3.  Preparing the configuration file:
  
     Go to the `configs/` directory and create your configuration file following 
-    the examples and instructional template on how to build a configuration file.
+    the instructional template and examples on how to build a configuration file.
     
 4.  Running the decoder software:
 
     To decode the BUFR data according to the instructions in your configuration file,
     run the `exe/bufrupperair.x` executable with the input BUFR file, output file, and 
-    configuration file provided as command line arguments.
+    configuration file provided as command line arguments. For example:
+    ```
+    bufrupperair.x ../bufrobs/gdas.adpupa.t00z.20210701.bufr ../textobs/gdas.adpupa.t00z.20210701.txt ../configs/bufrupperair.config
+    ```
 
     To generically dump output from an individual file, run the `exe/dumpbufr.x` 
     executable.  From here you will be prompted to enter the name of the input
