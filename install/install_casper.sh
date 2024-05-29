@@ -27,7 +27,7 @@ set -eua
  
 CPLAT=linux
 SRC=../src
-LIB=/glade/u/apps/dav/opt/bufrlib/11.0.0/intel/17.0.1/lib  # path to BUFRLIB
+LIB=/glade/u/home/tcram/bufrlib/12.0.1/casper/gnu/lib64/libbufr_4.a  # path to BUFRLIB
 EXE=../exe
 INSTALL=.
 
@@ -36,15 +36,17 @@ fflag=""
 
 if [ $CPLAT = linux ]
 then
-   CC=icc
-   FC=ifort
-   fflag=""
-   cflag="-DUNDERSCORE"
+# Intel compiler
+#   CC=icc
+#   FC=ifort
+#   fflag=""
+#   cflag="-DUNDERSCORE"
 
-#   export FC=gfortran
-#   export CC=gcc
-#   fflag=" -O3 -DUNDERSCORE -fno-second-underscore -w"
-#   cflag=" -O3 -DUNDERSCORE -w"
+# Gnu compiler
+   FC=gfortran
+   CC=gcc
+   fflag=" -O3 -DUNDERSCORE -fno-second-underscore -w"
+   cflag=" -O3 -DUNDERSCORE -w"
 fi
 
 #  Compile the source code
@@ -58,8 +60,8 @@ $FC $fflag -c $SRC/bufrupperair.f
 #  -----------------------------
 
 echo "Linking..."
-$FC $fflag -o $EXE/dumpbufr.x dumpbufr.o $LIB/libbufr.a
-$FC $fflag -o $EXE/bufrupperair.x bufrupperair.o $LIB/libbufr.a
+$FC $fflag -o $EXE/dumpbufr.x dumpbufr.o $LIB
+$FC $fflag -o $EXE/bufrupperair.x bufrupperair.o $LIB
 
 #  clean up
 #  --------
