@@ -196,7 +196,7 @@ C         LIBRARY - SEE ROUTINE string.f
 C
         QIDENT(001:025) = 'WMOB WMOS RPID CLAT CLON '
         QIDENT(026:050) = 'SELV YEAR MNTH DAYS HOUR '
-        QIDENT(051:075) = 'MINU                     '
+        QIDENT(051:075) = 'MINU CLATH CLONH         '
         QIDENT(076:080) = '     '
 C
         QBPARM(001:025) = '     PRLC PSAL GP10 GP07 '
@@ -942,21 +942,34 @@ C
             IDUMP = MOD(REPORTS,I500)
 C
             Z = 1
-C
-C           TOSS, AS SOON AS POSSIBLE, REPORTS WHICH ARE MISSING ABSOLUTELY
-C             ESSENTIAL INFORMATION.  THIS AVOIDS UNNECESSARY PROCESSING
-C             OF SUBSEQUENT INFORMATION IN A REPORT
-C
-            DO  ITOSS = 4, 10
-              IF (ITOSS.EQ.6)  CYCLE
-C
-C             BAD LATITUDE, LONGITUDE, YEAR, MONTH, DAY, HOUR
-C                 4         5          7     8      9    10
-C
-              IF (R8IDENT(ITOSS,Z).GT.R8BIG)  GO TO 290 ! MISSING VALUE
+
+c           CHECK LATITUDE AND LONGITUDE FOR MISSING VALUES.
+C             USE CLATH AND CLONH IF CLAT AND CLON ARE MISSING.
+C             REJECT REPORT IF BOTH ARE MISSING
+
+            IF (ibfms(R8IDENT(4,Z)) .EQ. 0) THEN
+               R8CLAT = R8IDENT(4,Z)
+            ELSE IF (ibfms(R8IDENT(12,Z)) .EQ. 0) THEN
+               R8CLAT = R8IDENT(12,Z)
+            ELSE
+               GO TO 290 ! MISSING LATITUDE
+            ENDIF
+
+            IF (ibfms(R8IDENT(5,Z)) .EQ. 0) THEN
+               R8CLON = R8IDENT(5,Z)
+            ELSE IF (ibfms(R8IDENT(13,Z)) .EQ. 0) THEN
+               R8CLON = R8IDENT(13,Z)
+            ELSE
+               GO TO 290 ! MISSING LONGITUDE
+            ENDIF
+
+C           CHECK OTHER VARS FOR MISSING VALUES.  REJECT REPORT IF
+C           MISSING. 
+C             YEAR, MONTH, DAY, HOUR
+C    INDEX:   7     8      9    10 
+            DO  ITOSS = 7, 10
+              IF (ibfms(R8IDENT(ITOSS,Z)) .EQ. 1) GO TO 290  ! MISSING VALUE
             ENDDO
-            R8CLAT = R8IDENT(4,Z)
-            R8CLON = R8IDENT(5,Z)
 
             IF (LLDO.EQ.'y')  THEN
               CALL CKLL (RECORDS,RECREPS,R8CLAT,R8CLON,LATS,LATN,
