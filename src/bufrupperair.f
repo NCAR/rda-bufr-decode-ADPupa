@@ -990,9 +990,8 @@ C    INDEX:   7     8      9    10
 C
 
 C         Check RPID for missing value
-            IF IBFMS(R8IDENT(3,Z) .EQ. 0) THEN
-              WRITE (A8RPID,9125)  R8IDENT(3,Z)
-9125          FORMAT (A8)
+            IF (IBFMS(R8IDENT(3,Z)) .EQ. 0) THEN
+              WRITE (A8RPID,'(A8)')  R8IDENT(3,Z)
               WRITE(A40RPID, '(A40)') R8IDENT(3,Z)
             ELSE
               WRITE(A8RPID, '(A8)') 'MISSING'
@@ -1001,7 +1000,7 @@ C         Check RPID for missing value
 C
 C         Set Satellite ID if RECTYPE = 'SATWND'
             IF (RECTYPE .EQ. 'SATWND') THEN
-              IF (R8IDENT(14,Z) .EQ. 0) THEN
+              IF (IBFMS(R8IDENT(14,Z)) .EQ. 0) THEN
                 CALL GETCFMNG(IIUNIT, 'SAID', nint(R8IDENT(14,Z)), 
      +                        '  ', -1, SAIDSTR, SAIDLEN, IRET)
                 IF (IRET .EQ. 0) THEN
