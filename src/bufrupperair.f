@@ -66,6 +66,9 @@ C
         CHARACTER*8    OBSTYPE    ! DECODED OBSERVATION TYPE
         CHARACTER*8    A8RPID
         DATA A8RPID / '        ' /
+        CHARACTER*8    A40RPID
+        CHARACTER*80   SAIDSTR
+        INTEGER        SAIDLEN, IRET
 C
         CHARACTER*6    RECGET(20)       ! FOR LIST OF RECORDS TO GET
         CHARACTER*1    IRECDO
@@ -196,7 +199,7 @@ C         LIBRARY - SEE ROUTINE string.f
 C
         QIDENT(001:025) = 'WMOB WMOS RPID CLAT CLON '
         QIDENT(026:050) = 'SELV YEAR MNTH DAYS HOUR '
-        QIDENT(051:075) = 'MINU CLATH CLONH         '
+        QIDENT(051:075) = 'MINU CLATH CLONH SAID    '
         QIDENT(076:080) = '     '
 C
         QBPARM(001:025) = '     PRLC PSAL GP10 GP07 '
@@ -315,7 +318,9 @@ C-------
         PLEVDO = 'n'
 C-------
 C
-        KELCEL = 'c'            ! INDEX 0     
+        KELCEL = 'c'            ! INDEX 0
+
+        WRITE(A40RPID, '(A40)') REPEAT(' ', 40)
 C
 C-----7---------------------------------------------------------------72
 C       READ INPUT ARGUMENTS                                    
@@ -771,11 +776,12 @@ C
         WRITE (*,*)
         WRITE (*,*)  'BUFR OUTPUT FILE OPENED ',output_file
 C
-C       SPECIFY THAT WE WOULD LIKE ROUTINE READNS TO RETURN RECDATE VALUES WITH
-C         10 DIGITS (I.E. YYYYMMDDHH ), WHICH IS THE MAXIMUM BECAUSE MINUTES ARE
-C         NOT AVAILABLE.
-C
+C*    Specify format of IDATE values returned by BUFRLIB
+C*    (YYYYMMDDHHMM)
         CALL DATELEN (10)
+
+C     Include code and flag tables from BUFR master tables
+        CALL CODFLG('Y')
 
         LN = 0          ! NEVER REDEFINED, UNLESS IT'S THROUGH THE EQIVALENCE
 C
@@ -929,7 +935,7 @@ C             equivalent to ASCII. All character data within BUFR and CREX messa
 C             are coded according to this standard."  WHEN THIS IS USED, EFFECTED
 C             REAL*8 VARIABLES RETURNED FROM A UFBINT CALL SHOULD BE WRITTEN TO A
 C             CHARACTER VARIABLE WITH AN 'A' FORMAT DESCRIPTOR.  EXAMPLES ARE THE
-C             REPORT ID AND AIRCRAFT ID.
+C             REPORT ID (RPID) AND AIRCRAFT ID (ACID).
 C
 C           MXREPL HAS BEEN SET TO ONE BECAUSE THERE SHOULD NOT BE ANY
 C             REPLICATION OF ID PARAMETERS.
@@ -982,10 +988,32 @@ C    INDEX:   7     8      9    10
               IF (ACK.EQ.'n')  GO TO 290        ! REJECT UNINTERESTING REPORT
             ENDIF
 C
-            WRITE (A8RPID,9125)  R8IDENT(3,Z)   ! R8IDENT(3,Z) IS CHARACTER
-9125        FORMAT (A8)                         ! AND THIS ACTION YIELDS A 
-C                                               ! LEFT-JUSTIFIED NUMBER OR STRING
+
+C         Check RPID for missing value
+            IF IBFMS(R8IDENT(3,Z) .EQ. 0) THEN
+              WRITE (A8RPID,9125)  R8IDENT(3,Z)
+9125          FORMAT (A8)
+              WRITE(A40RPID, '(A40)') R8IDENT(3,Z)
+            ELSE
+              WRITE(A8RPID, '(A8)') 'MISSING'
+              WRITE(A40RPID, '(A40)') 'MISSING'
+            ENDIF
 C
+C         Set Satellite ID if RECTYPE = 'SATWND'
+            IF (RECTYPE .EQ. 'SATWND') THEN
+              IF (R8IDENT(14,Z) .EQ. 0) THEN
+                CALL GETCFMNG(IIUNIT, 'SAID', nint(R8IDENT(14,Z)), 
+     +                        '  ', -1, SAIDSTR, SAIDLEN, IRET)
+                IF (IRET .EQ. 0) THEN
+                  WRITE(A40RPID, '(A40)') SAIDSTR(1:SAIDLEN)
+                ELSE
+                  WRITE(A40RPID, '(A40)') 'SATELLITE ID MISSING'
+                ENDIF
+              ELSE 
+                WRITE(A40RPID, '(A40)') 'SATELLITE ID MISSING'
+              ENDIF
+            ENDIF
+
             IF (OBSTYPE.EQ.'RAOBF   '.OR.OBSTYPE.EQ.'PIBAL   ')  THEN    
 c                                               ! OTHER UPPER AIR RECORD TYPES DO
 C                                               ! NOT HAVE WMO NUMBER IDENTIFIERS
@@ -996,13 +1024,13 @@ C                                               ! NOT HAVE WMO NUMBER IDENTIFIER
                 CALL CKWMO (RECORDS,RECREPS,A8RPID,WMOLIST,NWMO,
      +                    IDUNIT,DODIAG,ACK)
                 IF (ACK.EQ.'n')  THEN
-                  GO TO 290                     ! REJECT UNINTERESTING REPORT
+                  GO TO 290                     ! REJECT REPORT
                 ENDIF
               ENDIF
               IF (WBBDO.EQ.'y')  THEN
                 CALL CKWBB (RECORDS,RECREPS,A8RPID,WBBLIST,NWBB,
      +                    IDUNIT,DODIAG,ACK)
-                IF (ACK.EQ.'n')  GO TO 290      ! REJECT UNINTERESTING REPORT
+                IF (ACK.EQ.'n')  GO TO 290      ! REJECT REPORT
               ENDIF
             ENDIF
 C
@@ -1012,7 +1040,7 @@ C
             IF (IELEVDO.EQ.'y')  THEN
               CALL CKELEV (RECORDS,RECREPS,I8SELV,IELEVL,IELEVH,
      +          IDUNIT,DODIAG,ACK)
-              IF (ACK.EQ.'n')  GO TO 290        ! REJECT UNINTERESTING REPORT
+              IF (ACK.EQ.'n')  GO TO 290        ! REJECT REPORT
             ENDIF
 C
             I8YEAR = R8IDENT(7,Z)
@@ -1187,8 +1215,6 @@ C                                       !   TO REPLACE MISSING A8RPID
                         ENDIF
                       ENDIF
                     ENDIF
-C           write (*,*)  'hello again bone-head [0] :: ', R8BPARM(MM,NL)
-C           write (*,*)  'R8XPARM (',NL,') :: ',R8XPARM(1,NL),'.'
                     EXTRA(MM,NL) = R8XPARM(1,NL)    ! MOVED FROM ABOVE, 20101129, PER DOUG'S SUGGESTION
                     IF (DODIAG.EQ.'y')  THEN
                       WRITE (*,*)  'NREPL ',NREPL, ', MM ',MM,
@@ -1236,7 +1262,7 @@ C
               IF (DEFAULT.EQ.'y')  THEN
                 WRITE (IPUNIT,9280)
      &          RECTYPE,          OBSTYPE,
-     &          I8DATE, MINUTE, A8RPID, R8CLAT, R8CLON, I8SELV, 
+     &          I8DATE, MINUTE, A40RPID, R8CLAT, R8CLON, I8SELV, 
      &          NL, A8VSIG(NL),
      &          R8PRLC(NL), R8PSAL(NL), 
      &          R8GP10(NL), R8GP07(NL), R8FLVL(NL),
@@ -1245,7 +1271,7 @@ C
      &          (EXTRA(MM,NL),MM=1,NML)
 9280            FORMAT (
      +          1X,A6,1X,    2X,A8,
-     +          2X,I10,A2,2X,A8,2X,F7.2,2X,F7.2,2X,I5,
+     +          2X,I10,A2,2X,A40,2X,F7.2,2X,F7.2,2X,I5,
      +          2X,I4,2X,A4,
      +          2X,F6.1,2X,F6.1,
      +          2X,F8.1,2X,F8.1,2X,F8.1,
@@ -1258,13 +1284,13 @@ C
                 WRITE (IPUNIT,9285)
 C    &          RECTYPE, IRECDAT, OBSTYPE,
      &          RECTYPE,          OBSTYPE,
-     &          I8DATE, MINUTE, A8RPID, R8CLAT, R8CLON, I8SELV,
+     &          I8DATE, MINUTE, A40RPID, R8CLAT, R8CLON, I8SELV,
      &          NL, A8VSIG(NL),
      &          (EXTRA(MM,NL),MM=1,NML)
 9285            FORMAT (
 C    +          1X,A6,2X,I10,3X,A8,
      +          1X,A6,1X,    2X,A8,
-     +          2X,I10,A2,2X,A8,2X,F7.2,2X,F7.2,2X,I5,
+     +          2X,I10,A2,2X,A40,2X,F7.2,2X,F7.2,2X,I5,
      +          2X,I4,2X,A4,
      +          2X,100F10.2)          ! WAS 12.2
               ENDIF
