@@ -1,5 +1,5 @@
 C ##############################################################################                    
-C #     PROGRAM BUFRUPPRAIR                                                    #
+C #     PROGRAM BUFRUPPERAIR                                                    #
 C #                                                                            #
 C #      A BUFR INPUT DATA FILE CONTAINS A SERIES OF "MESSAGES" (WHICH ARE     #
 C #        VARIABLE LENGTH RECORDS), EACH CONTAINING AT LEAST ONE BUFR         #
@@ -320,7 +320,7 @@ C-------
 C
         KELCEL = 'c'            ! INDEX 0
 
-        WRITE(A40RPID, '(A40)') REPEAT(' ', 40)
+        WRITE(A40RPID, '(40X)')
 C
 C-----7---------------------------------------------------------------72
 C       READ INPUT ARGUMENTS                                    
@@ -988,17 +988,8 @@ C    INDEX:   7     8      9    10
               IF (ACK.EQ.'n')  GO TO 290        ! REJECT UNINTERESTING REPORT
             ENDIF
 C
-
-C         Check RPID for missing value
-            IF (IBFMS(R8IDENT(3,Z)) .EQ. 0) THEN
-              WRITE (A8RPID,'(A8)')  R8IDENT(3,Z)
-              WRITE(A40RPID, '(A40)') R8IDENT(3,Z)
-            ELSE
-              WRITE(A8RPID, '(A8)') 'MISSING'
-              WRITE(A40RPID, '(A40)') 'MISSING'
-            ENDIF
-C
-C         Set Satellite ID if RECTYPE = 'SATWND'
+C         If RECTYPE = 'SATWND', use Satellite ID (SAID) instead 
+C         of report ID (RPID).  Set A8RPID to missing if this is the case.
             IF (RECTYPE .EQ. 'SATWND') THEN
               IF (IBFMS(R8IDENT(14,Z)) .EQ. 0) THEN
                 CALL GETCFMNG(IIUNIT, 'SAID', nint(R8IDENT(14,Z)), 
@@ -1010,6 +1001,16 @@ C         Set Satellite ID if RECTYPE = 'SATWND'
                 ENDIF
               ELSE 
                 WRITE(A40RPID, '(A40)') 'SATELLITE ID MISSING'
+              ENDIF
+              WRITE(A8RPID, '(A8)') 'MISSING'
+            ELSE
+C             Not SATWND; Check RPID for missing value
+              IF (IBFMS(R8IDENT(3,Z)) .EQ. 0) THEN
+                WRITE (A8RPID,'(A8)')  R8IDENT(3,Z)
+                WRITE(A40RPID, '(A40)') R8IDENT(3,Z)
+              ELSE
+                WRITE(A8RPID, '(A8)') 'MISSING'
+                WRITE(A40RPID, '(A40)') 'MISSING'
               ENDIF
             ENDIF
 
