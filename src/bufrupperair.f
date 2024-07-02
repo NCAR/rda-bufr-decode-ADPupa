@@ -1,5 +1,5 @@
 C ##############################################################################                    
-C #     PROGRAM BUFRUPPRAIR                                                    #
+C #     PROGRAM BUFRUPPERAIR                                                    #
 C #                                                                            #
 C #      A BUFR INPUT DATA FILE CONTAINS A SERIES OF "MESSAGES" (WHICH ARE     #
 C #        VARIABLE LENGTH RECORDS), EACH CONTAINING AT LEAST ONE BUFR         #
@@ -66,6 +66,9 @@ C
         CHARACTER*8    OBSTYPE    ! DECODED OBSERVATION TYPE
         CHARACTER*8    A8RPID
         DATA A8RPID / '        ' /
+        CHARACTER*40    A40RPID
+        CHARACTER*80   SAIDSTR
+        INTEGER        SAIDLEN, IRET
 C
         CHARACTER*6    RECGET(20)       ! FOR LIST OF RECORDS TO GET
         CHARACTER*1    IRECDO
@@ -196,7 +199,7 @@ C         LIBRARY - SEE ROUTINE string.f
 C
         QIDENT(001:025) = 'WMOB WMOS RPID CLAT CLON '
         QIDENT(026:050) = 'SELV YEAR MNTH DAYS HOUR '
-        QIDENT(051:075) = 'MINU CLATH CLONH         '
+        QIDENT(051:075) = 'MINU CLATH CLONH SAID    '
         QIDENT(076:080) = '     '
 C
         QBPARM(001:025) = '     PRLC PSAL GP10 GP07 '
@@ -204,38 +207,25 @@ C
         QBPARM(051:075) = 'TMDP REHU                '
         QBPARM(076:080) = '     '
 C
-C       SET THE HEADER STRINGS (FOR THE DEFAULT MODE - LATER RESET IF
+C       SET THE HEADER STRINGS (FOR THE DEFAULT MODE - RESET LATER IF
 C         NOT IN DEFAULT MODE)
 C       ================================================================
-        DUMPHED(1)(001:028) = ' REC      OBS       REPORT T'
-        DUMPHED(1)(029:068) = 'IME   STN WMO     LATI-   LONGI-   STN  '  
-        DUMPHED(1)(069:108) = '  SEQ  VSIG   PRES    PSAL     GEOPOT   '
-        DUMPHED(1)(109:148) = '   GP07     FLVL   AIR     DEW-  REL    '
-        DUMPHED(1)(149:188) = ' WIND    WIND     |                     '
-        IHDEND = 171
-        DUMPHED(1)(189:200) = '             '
+        DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
+        DUMPHED(1)(041:080) = '         WMO/STATION/SATELLITE ID     LA'
+        DUMPHED(1)(081:120) = 'TI-   LONGI-   STN    SEQ  VSIG   PRES  '
+        DUMPHED(1)(121:160) = '  PSAL     GEOPOT      GP07     FLVL   A'
+        DUMPHED(1)(161:200) = 'IR     DEW-  REL     WIND    WIND     | '
+        DUMPHED(1)(201:1200) = REPEAT(' ', 1000)
 C
-        DUMPHED(1)(201:240) = '                                        '
-        DUMPHED(1)(241:280) = DUMPHED(1)(201:240)
-        DUMPHED(1)(281:360) = DUMPHED(1)(201:280)
-        DUMPHED(1)(361:520) = DUMPHED(1)(201:360)
-        DUMPHED(1)(521:840) = DUMPHED(1)(201:520)
-        DUMPHED(1)(841:1200)= DUMPHED(1)(201:560)
+        DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
+        DUMPHED(2)(041:080) = '                                      TU'
+        DUMPHED(2)(081:120) = 'DE     TUDE    ELEV    NO  CODE   (MB)  '
+        DUMPHED(2)(121:160) = '  (MB)     (M2/S2)   (M2/S2)    (M)    T'
+        DUMPHED(2)(161:200) = 'EMP   POINT  HUM     DIR    SPD(M/S)  | '
+        DUMPHED(2)(201:1200) = REPEAT(' ', 1000)
+c        IHDEND = 171
+        IHDEND = 203
 C
-        DUMPHED(2)(001:028) = ' TYPE     TYPE      YYYYMMDD'
-        DUMPHED(2)(029:068) = 'HHMM  / OTHER ID  TUDE     TUDE    ELEV '
-        DUMPHED(2)(069:108) = '   NO  CODE   (MB)    (MB)     (M2/S2)  '
-        DUMPHED(2)(109:148) = ' (M2/S2)    (M)    TEMP   POINT  HUM    '
-        DUMPHED(2)(149:188) = ' DIR    SPD(M/S)  |                     '
-        IHDEND = 171
-        DUMPHED(2)(189:200) = '                  '
-C
-        DUMPHED(2)(201:240) = '                                        '
-        DUMPHED(2)(241:280) = DUMPHED(2)(201:240)
-        DUMPHED(2)(281:360) = DUMPHED(2)(201:280)
-        DUMPHED(2)(361:520) = DUMPHED(2)(201:360)
-        DUMPHED(2)(521:840) = DUMPHED(2)(201:520)
-        DUMPHED(2)(841:1200)= DUMPHED(2)(201:560)
 C       ================================================================
 C
         FILL9  = 999.9
@@ -315,7 +305,9 @@ C-------
         PLEVDO = 'n'
 C-------
 C
-        KELCEL = 'c'            ! INDEX 0     
+        KELCEL = 'c'            ! INDEX 0
+
+        WRITE(A40RPID, '(40X)')
 C
 C-----7---------------------------------------------------------------72
 C       READ INPUT ARGUMENTS                                    
@@ -405,23 +397,19 @@ C         IDX = 4: PARAMETER MNEMONICS SUBSETTING
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'n')  THEN
               DEFAULT = 'n'
 
-C             MUST RESET THE HEADER STRINGS
-
-        DUMPHED(1)(001:028) = ' REC      OBS       REPORT T'
-        DUMPHED(1)(029:068) = 'IME   STATION   LATI-   LONGI-   ELE-   '
-        DUMPHED(1)(069:103) = ' SEQ  VERT                              '
-        DUMPHED(1)(104:143) = '                                        '
-        DUMPHED(1)(144:183) = '                                        '
-        DUMPHED(1)(184:200) = '                 '
+C       RESET THE HEADER STRINGS
+        DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
+        DUMPHED(1)(041:080) = '                 STATION/SATELLITE   LAT'
+        DUMPHED(1)(081:120) = 'I-   LONGI-   ELE-    SEQ  VERT         '
+        DUMPHED(1)(121:200) = REPEAT(' ', 80)
 C
-        DUMPHED(2)(001:028) = ' TYPE     TYPE      YYYYMMDD'
-        DUMPHED(2)(029:068) = 'HHMM  BBSSS     TUDE     TUDE   VATION  '
-        DUMPHED(2)(069:103) = '  NO   USE                              '
-        DUMPHED(2)(104:143) = '                                        '
-        DUMPHED(2)(144:183) = '                                        '
-        DUMPHED(2)(184:200) = '                 '
+        DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
+        DUMPHED(2)(041:080) = '                            BBSSS    TUD'
+        DUMPHED(2)(081:120) = 'E     TUDE   VATION    NO   USE         '
+        DUMPHED(2)(121:200) = REPEAT(' ', 80)
 C
-              IHDEND =  81
+C              IHDEND =  81
+              IHDEND =  114
               CYCLE
             ENDIF
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'y')  THEN
@@ -771,11 +759,12 @@ C
         WRITE (*,*)
         WRITE (*,*)  'BUFR OUTPUT FILE OPENED ',output_file
 C
-C       SPECIFY THAT WE WOULD LIKE ROUTINE READNS TO RETURN RECDATE VALUES WITH
-C         10 DIGITS (I.E. YYYYMMDDHH ), WHICH IS THE MAXIMUM BECAUSE MINUTES ARE
-C         NOT AVAILABLE.
-C
+C*    Specify format of IDATE values returned by BUFRLIB
+C*    (YYYYMMDDHHMM)
         CALL DATELEN (10)
+
+C     Include code and flag tables from BUFR master tables
+        CALL CODFLG('Y')
 
         LN = 0          ! NEVER REDEFINED, UNLESS IT'S THROUGH THE EQIVALENCE
 C
@@ -929,7 +918,7 @@ C             equivalent to ASCII. All character data within BUFR and CREX messa
 C             are coded according to this standard."  WHEN THIS IS USED, EFFECTED
 C             REAL*8 VARIABLES RETURNED FROM A UFBINT CALL SHOULD BE WRITTEN TO A
 C             CHARACTER VARIABLE WITH AN 'A' FORMAT DESCRIPTOR.  EXAMPLES ARE THE
-C             REPORT ID AND AIRCRAFT ID.
+C             REPORT ID (RPID) AND AIRCRAFT ID (ACID).
 C
 C           MXREPL HAS BEEN SET TO ONE BECAUSE THERE SHOULD NOT BE ANY
 C             REPLICATION OF ID PARAMETERS.
@@ -982,10 +971,32 @@ C    INDEX:   7     8      9    10
               IF (ACK.EQ.'n')  GO TO 290        ! REJECT UNINTERESTING REPORT
             ENDIF
 C
-            WRITE (A8RPID,9125)  R8IDENT(3,Z)   ! R8IDENT(3,Z) IS CHARACTER
-9125        FORMAT (A8)                         ! AND THIS ACTION YIELDS A 
-C                                               ! LEFT-JUSTIFIED NUMBER OR STRING
-C
+C         If RECTYPE = 'SATWND', use Satellite ID (SAID) instead 
+C         of report ID (RPID).  Set A8RPID to missing if this is the case.
+            IF (RECTYPE .EQ. 'SATWND') THEN
+              IF (IBFMS(R8IDENT(14,Z)) .EQ. 0) THEN
+                CALL GETCFMNG(IIUNIT, 'SAID', nint(R8IDENT(14,Z)), 
+     +                        '  ', -1, SAIDSTR, SAIDLEN, IRET)
+                IF (IRET .EQ. 0) THEN
+                  WRITE(A40RPID, '(A40)') SAIDSTR(1:SAIDLEN)
+                ELSE
+                  WRITE(A40RPID, '(A40)') 'SATELLITE ID MISSING'
+                ENDIF
+              ELSE 
+                WRITE(A40RPID, '(A40)') 'SATELLITE ID MISSING'
+              ENDIF
+              WRITE(A8RPID, '(A8)') 'MISSING'
+            ELSE
+C             Not SATWND; Check RPID for missing value
+              IF (IBFMS(R8IDENT(3,Z)) .EQ. 0) THEN
+                WRITE (A8RPID,'(A8)')  R8IDENT(3,Z)
+                WRITE(A40RPID, '(A40)') R8IDENT(3,Z)
+              ELSE
+                WRITE(A8RPID, '(A8)') 'MISSING'
+                WRITE(A40RPID, '(A40)') 'MISSING'
+              ENDIF
+            ENDIF
+
             IF (OBSTYPE.EQ.'RAOBF   '.OR.OBSTYPE.EQ.'PIBAL   ')  THEN    
 c                                               ! OTHER UPPER AIR RECORD TYPES DO
 C                                               ! NOT HAVE WMO NUMBER IDENTIFIERS
@@ -996,13 +1007,13 @@ C                                               ! NOT HAVE WMO NUMBER IDENTIFIER
                 CALL CKWMO (RECORDS,RECREPS,A8RPID,WMOLIST,NWMO,
      +                    IDUNIT,DODIAG,ACK)
                 IF (ACK.EQ.'n')  THEN
-                  GO TO 290                     ! REJECT UNINTERESTING REPORT
+                  GO TO 290                     ! REJECT REPORT
                 ENDIF
               ENDIF
               IF (WBBDO.EQ.'y')  THEN
                 CALL CKWBB (RECORDS,RECREPS,A8RPID,WBBLIST,NWBB,
      +                    IDUNIT,DODIAG,ACK)
-                IF (ACK.EQ.'n')  GO TO 290      ! REJECT UNINTERESTING REPORT
+                IF (ACK.EQ.'n')  GO TO 290      ! REJECT REPORT
               ENDIF
             ENDIF
 C
@@ -1012,7 +1023,7 @@ C
             IF (IELEVDO.EQ.'y')  THEN
               CALL CKELEV (RECORDS,RECREPS,I8SELV,IELEVL,IELEVH,
      +          IDUNIT,DODIAG,ACK)
-              IF (ACK.EQ.'n')  GO TO 290        ! REJECT UNINTERESTING REPORT
+              IF (ACK.EQ.'n')  GO TO 290        ! REJECT REPORT
             ENDIF
 C
             I8YEAR = R8IDENT(7,Z)
@@ -1187,8 +1198,6 @@ C                                       !   TO REPLACE MISSING A8RPID
                         ENDIF
                       ENDIF
                     ENDIF
-C           write (*,*)  'hello again bone-head [0] :: ', R8BPARM(MM,NL)
-C           write (*,*)  'R8XPARM (',NL,') :: ',R8XPARM(1,NL),'.'
                     EXTRA(MM,NL) = R8XPARM(1,NL)    ! MOVED FROM ABOVE, 20101129, PER DOUG'S SUGGESTION
                     IF (DODIAG.EQ.'y')  THEN
                       WRITE (*,*)  'NREPL ',NREPL, ', MM ',MM,
@@ -1236,7 +1245,7 @@ C
               IF (DEFAULT.EQ.'y')  THEN
                 WRITE (IPUNIT,9280)
      &          RECTYPE,          OBSTYPE,
-     &          I8DATE, MINUTE, A8RPID, R8CLAT, R8CLON, I8SELV, 
+     &          I8DATE, MINUTE, A40RPID, R8CLAT, R8CLON, I8SELV, 
      &          NL, A8VSIG(NL),
      &          R8PRLC(NL), R8PSAL(NL), 
      &          R8GP10(NL), R8GP07(NL), R8FLVL(NL),
@@ -1245,7 +1254,7 @@ C
      &          (EXTRA(MM,NL),MM=1,NML)
 9280            FORMAT (
      +          1X,A6,1X,    2X,A8,
-     +          2X,I10,A2,2X,A8,2X,F7.2,2X,F7.2,2X,I5,
+     +          2X,I10,A2,2X,A40,2X,F7.2,2X,F7.2,2X,I5,
      +          2X,I4,2X,A4,
      +          2X,F6.1,2X,F6.1,
      +          2X,F8.1,2X,F8.1,2X,F8.1,
@@ -1258,13 +1267,13 @@ C
                 WRITE (IPUNIT,9285)
 C    &          RECTYPE, IRECDAT, OBSTYPE,
      &          RECTYPE,          OBSTYPE,
-     &          I8DATE, MINUTE, A8RPID, R8CLAT, R8CLON, I8SELV,
+     &          I8DATE, MINUTE, A40RPID, R8CLAT, R8CLON, I8SELV,
      &          NL, A8VSIG(NL),
      &          (EXTRA(MM,NL),MM=1,NML)
 9285            FORMAT (
 C    +          1X,A6,2X,I10,3X,A8,
      +          1X,A6,1X,    2X,A8,
-     +          2X,I10,A2,2X,A8,2X,F7.2,2X,F7.2,2X,I5,
+     +          2X,I10,A2,2X,A40,2X,F7.2,2X,F7.2,2X,I5,
      +          2X,I4,2X,A4,
      +          2X,100F10.2)          ! WAS 12.2
               ENDIF
