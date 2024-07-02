@@ -397,19 +397,19 @@ C         IDX = 4: PARAMETER MNEMONICS SUBSETTING
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'n')  THEN
               DEFAULT = 'n'
 
-C             RESET THE HEADER STRINGS
+C       RESET THE HEADER STRINGS
         DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
-        DUMPHED(1)(041:080) = '                  STATION/SATELLITE   LA'
-        DUMPHED(1)(081:120) = 'TI-   LONGI-   ELE-    SEQ  VERT        '
+        DUMPHED(1)(041:080) = '                 STATION/SATELLITE   LAT'
+        DUMPHED(1)(081:120) = 'I-   LONGI-   ELE-    SEQ  VERT         '
         DUMPHED(1)(121:200) = REPEAT(' ', 80)
 C
         DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
-        DUMPHED(2)(041:080) = '                             BBSSS    TU'
-        DUMPHED(2)(081:120) = 'DE     TUDE   VATION    NO   USE        '
+        DUMPHED(2)(041:080) = '                            BBSSS    TUD'
+        DUMPHED(2)(081:120) = 'E     TUDE   VATION    NO   USE         '
         DUMPHED(2)(121:200) = REPEAT(' ', 80)
 C
 C              IHDEND =  81
-              IHDEND =  112
+              IHDEND =  114
               CYCLE
             ENDIF
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'y')  THEN
