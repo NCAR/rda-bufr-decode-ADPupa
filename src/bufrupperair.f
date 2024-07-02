@@ -399,13 +399,13 @@ C         IDX = 4: PARAMETER MNEMONICS SUBSETTING
 
 C             RESET THE HEADER STRINGS
         DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
-        DUMPHED(1)(041:080) = '               STATION/SATELLITE   LATI-'
-        DUMPHED(1)(081:120) = '   LONGI-   ELE-    SEQ  VERT           '
+        DUMPHED(1)(041:080) = '                  STATION/SATELLITE   LA'
+        DUMPHED(1)(081:120) = 'TI-   LONGI-   ELE-    SEQ  VERT        '
         DUMPHED(1)(121:200) = REPEAT(' ', 80)
 C
         DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
-        DUMPHED(2)(041:080) = '                          BBSSS    TUDE '
-        DUMPHED(2)(081:120) = '    TUDE   VATION    NO   USE           '
+        DUMPHED(2)(041:080) = '                             BBSSS    TU'
+        DUMPHED(2)(081:120) = 'DE     TUDE   VATION    NO   USE        '
         DUMPHED(2)(121:200) = REPEAT(' ', 80)
 C
 C              IHDEND =  81
