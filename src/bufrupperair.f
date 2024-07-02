@@ -207,38 +207,25 @@ C
         QBPARM(051:075) = 'TMDP REHU                '
         QBPARM(076:080) = '     '
 C
-C       SET THE HEADER STRINGS (FOR THE DEFAULT MODE - LATER RESET IF
+C       SET THE HEADER STRINGS (FOR THE DEFAULT MODE - RESET LATER IF
 C         NOT IN DEFAULT MODE)
 C       ================================================================
-        DUMPHED(1)(001:028) = ' REC      OBS       REPORT T'
-        DUMPHED(1)(029:068) = 'IME   STN WMO     LATI-   LONGI-   STN  '  
-        DUMPHED(1)(069:108) = '  SEQ  VSIG   PRES    PSAL     GEOPOT   '
-        DUMPHED(1)(109:148) = '   GP07     FLVL   AIR     DEW-  REL    '
-        DUMPHED(1)(149:188) = ' WIND    WIND     |                     '
-        IHDEND = 171
-        DUMPHED(1)(189:200) = '             '
+        DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
+        DUMPHED(1)(041:080) = '         WMO/STATION/SATELLITE ID     LA'
+        DUMPHED(1)(081:120) = 'TI-   LONGI-   STN    SEQ  VSIG   PRES  '
+        DUMPHED(1)(121:160) = '  PSAL     GEOPOT      GP07     FLVL   A'
+        DUMPHED(1)(161:200) = 'IR     DEW-  REL     WIND    WIND     | '
+        DUMPHED(1)(201:1200) = REPEAT(' ', 1000)
 C
-        DUMPHED(1)(201:240) = '                                        '
-        DUMPHED(1)(241:280) = DUMPHED(1)(201:240)
-        DUMPHED(1)(281:360) = DUMPHED(1)(201:280)
-        DUMPHED(1)(361:520) = DUMPHED(1)(201:360)
-        DUMPHED(1)(521:840) = DUMPHED(1)(201:520)
-        DUMPHED(1)(841:1200)= DUMPHED(1)(201:560)
+        DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
+        DUMPHED(2)(041:080) = '                                      TU'
+        DUMPHED(2)(081:120) = 'DE     TUDE    ELEV    NO  CODE   (MB)  '
+        DUMPHED(2)(121:160) = '  (MB)     (M2/S2)   (M2/S2)    (M)    T'
+        DUMPHED(2)(161:200) = 'EMP   POINT  HUM     DIR    SPD(M/S)  | '
+        DUMPHED(2)(201:1200) = REPEAT(' ', 1000)
+c        IHDEND = 171
+        IHDEND = 203
 C
-        DUMPHED(2)(001:028) = ' TYPE     TYPE      YYYYMMDD'
-        DUMPHED(2)(029:068) = 'HHMM  / OTHER ID  TUDE     TUDE    ELEV '
-        DUMPHED(2)(069:108) = '   NO  CODE   (MB)    (MB)     (M2/S2)  '
-        DUMPHED(2)(109:148) = ' (M2/S2)    (M)    TEMP   POINT  HUM    '
-        DUMPHED(2)(149:188) = ' DIR    SPD(M/S)  |                     '
-        IHDEND = 171
-        DUMPHED(2)(189:200) = '                  '
-C
-        DUMPHED(2)(201:240) = '                                        '
-        DUMPHED(2)(241:280) = DUMPHED(2)(201:240)
-        DUMPHED(2)(281:360) = DUMPHED(2)(201:280)
-        DUMPHED(2)(361:520) = DUMPHED(2)(201:360)
-        DUMPHED(2)(521:840) = DUMPHED(2)(201:520)
-        DUMPHED(2)(841:1200)= DUMPHED(2)(201:560)
 C       ================================================================
 C
         FILL9  = 999.9
@@ -410,23 +397,19 @@ C         IDX = 4: PARAMETER MNEMONICS SUBSETTING
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'n')  THEN
               DEFAULT = 'n'
 
-C             MUST RESET THE HEADER STRINGS
-
-        DUMPHED(1)(001:028) = ' REC      OBS       REPORT T'
-        DUMPHED(1)(029:068) = 'IME   STATION   LATI-   LONGI-   ELE-   '
-        DUMPHED(1)(069:103) = ' SEQ  VERT                              '
-        DUMPHED(1)(104:143) = '                                        '
-        DUMPHED(1)(144:183) = '                                        '
-        DUMPHED(1)(184:200) = '                 '
+C             RESET THE HEADER STRINGS
+        DUMPHED(1)(001:040) = ' REC      OBS       REPORT TIME         '
+        DUMPHED(1)(041:080) = '               STATION/SATELLITE   LATI-'
+        DUMPHED(1)(081:120) = '   LONGI-   ELE-    SEQ  VERT           '
+        DUMPHED(1)(121:200) = REPEAT(' ', 80)
 C
-        DUMPHED(2)(001:028) = ' TYPE     TYPE      YYYYMMDD'
-        DUMPHED(2)(029:068) = 'HHMM  BBSSS     TUDE     TUDE   VATION  '
-        DUMPHED(2)(069:103) = '  NO   USE                              '
-        DUMPHED(2)(104:143) = '                                        '
-        DUMPHED(2)(144:183) = '                                        '
-        DUMPHED(2)(184:200) = '                 '
+        DUMPHED(2)(001:040) = ' TYPE     TYPE      YYYYMMDDHHMM        '
+        DUMPHED(2)(041:080) = '                          BBSSS    TUDE '
+        DUMPHED(2)(081:120) = '    TUDE   VATION    NO   USE           '
+        DUMPHED(2)(121:200) = REPEAT(' ', 80)
 C
-              IHDEND =  81
+C              IHDEND =  81
+              IHDEND =  112
               CYCLE
             ENDIF
             IF (INDEX.EQ.41.AND.CSTRING(5:5).EQ.'y')  THEN
